@@ -1,0 +1,152 @@
+### Linear regression, Ridge and Lasso
+
+#hose pricing dataset
+from sklearn.datasets import load_boston
+
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+df= load_boston()
+
+df
+
+pd.DataFrame(df.data)
+
+
+dataset=pd.DataFrame(df.data)
+dataset.columns=df.feature_names
+dataset.head()
+
+dataset['Price']=df.target
+
+dataset.head()
+
+## Dividing the data set into independent and adnd dependant feature
+X=dataset.iloc[:,:-1]
+y=dataset.iloc[:,-1]
+
+X.head()
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test=train_test_split(X,y,test_size=0.33,random_state=42)
+
+# Linear Regression
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import cross_val_score
+lin_reg=LinearRegression()
+mse=cross_val_score(lin_reg,X,y,scoring='neg_mean_squared_error',cv=5)
+print(mse)
+
+# Linear Regression
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import cross_val_score
+lin_reg=LinearRegression()
+mse=cross_val_score(lin_reg,X_test,y_test,scoring='neg_mean_squared_error',cv=5)
+print(mse)
+
+mean_mse=np.mean(mse)
+mean_mse
+
+lin_reg.fit(X_train,y_train)
+##lin_reg.predict(y)
+
+#Ridge Regression
+from sklearn.linear_model import Ridge
+from sklearn.model_selection import GridSearchCV
+ridge=Ridge()
+
+params={'alpha':[1e-15,1e-10,1e-8,1e-3, 1e-2,1,5,10,20]}
+ridge_regressor=GridSearchCV(ridge,params,scoring='neg_mean_squared_error')
+ridge_regressor.fit(X,y)
+
+print(ridge_regressor.best_params_)
+print(ridge_regressor.best_score_)
+
+#Lasso Regression
+from sklearn.linear_model import Lasso
+from sklearn.model_selection import GridSearchCV
+ridge=Lasso()
+
+params={'alpha':[1e-15,1e-10,1e-8,1e-3, 1e-2,1,5,10,20]}
+lasso_regressor=GridSearchCV(ridge,params,scoring='neg_mean_squared_error')
+lasso_regressor.fit(X,y)
+
+print(lasso_regressor.best_params_)
+print(lasso_regressor.best_score_)
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test=train_test_split(X,y,test_size=0.33,random_state=42)
+
+y_pred=lasso_regressor.predict(X_test)
+
+
+from sklearn.metrics import r2_score
+r2_score=r2_score(y_pred,y_test)
+print(r2_score)
+
+y_pred=ridge_regressor.predict(X_test)
+from sklearn.metrics import r2_score
+r2_score=r2_score(y_pred,y_test)
+print(r2_score)
+
+y_pred=lin_reg.predict(X_test)
+from sklearn.metrics import r2_score
+r2_score=r2_score(y_pred,y_test)
+print(r2_score)
+
+### Logistic Regression
+
+from sklearn.datasets import load_breast_cancer
+
+df=load_breast_cancer()
+##independent features
+X=pd.DataFrame(df['data'],columns=df['feature_names'])
+X.head()
+
+##Dependent features
+y=pd.DataFrame(df['target'],columns=['target'])
+y
+
+#checking , datasets are balanced or not
+y['target'].value_counts()
+
+##train test split
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test=train_test_split(X,y,test_size=0.33,random_state=42)
+
+
+params=[{'C':[1,5,10]},{'max_iter':[100,150]}]
+
+from sklearn.linear_model import LogisticRegression
+model1=LogisticRegression(C=100,max_iter=100)
+
+GridSearchCV(model1,param_grid=params,scoring="f1")
+
+GridSearchCV(model1,param_grid=params,scoring="f1",cv=5)
+
+model=GridSearchCV(model1,param_grid=params,scoring="f1",cv=5)
+
+model.fit(X_train,y_train)
+
+model.best_params_
+
+model.best_score_
+
+y_pred=model.predict(X_test)
+
+y_pred
+
+##confusion matrics
+from sklearn.metrics import confusion_matrix,classification_report,accuracy_score
+
+confusion_matrix(y_pred,y_test)
+
+confusion_matrix(y_test,y_pred)
+
+accuracy_score(y_test,y_pred)
+
+print(classification_report(y_test,y_pred))
+
