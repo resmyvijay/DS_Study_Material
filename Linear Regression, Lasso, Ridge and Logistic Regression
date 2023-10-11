@@ -1,4 +1,4 @@
-### Linear regression, Ridge and Lasso
+#### Linear regression, Ridge and Lasso
 
 #hose pricing dataset
 from sklearn.datasets import load_boston
