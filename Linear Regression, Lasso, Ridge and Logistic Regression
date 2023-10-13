@@ -1,6 +1,6 @@
 #### Linear regression, Ridge and Lasso
 
-#hose pricing dataset
+#house pricing dataset
 from sklearn.datasets import load_boston
 
 import numpy as np
